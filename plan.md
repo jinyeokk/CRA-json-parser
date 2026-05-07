@@ -9,12 +9,12 @@
 | 단계 | 내용 | 테스트 파일 | 상태 |
 |------|------|------------|------|
 | 1 | Tokenizer (어휘 분석기) | `tests/test_tokenizer.py` | 완료 |
-| 2 | Parser (구문 분석기) | `tests/test_parser.py` | 미완료 |
-| 3 | Python 객체로 변환 | `tests/test_parser.py` (공유) | 미완료 |
-| 4 | JSON 직렬화 (Python → JSON 문자열) | `tests/test_serializer.py` | 미완료 |
-| 5 | 파일 입출력 (load / dump) | `tests/test_io.py` | 미완료 |
-| 6 | 오류 처리 및 예외 정의 | `tests/test_errors.py` | 미완료 |
-| 7 | 통합 테스트 | `tests/test_integration.py` | 미완료 |
+| 2 | Parser (구문 분석기) | `tests/test_parser.py` | 완료 |
+| 3 | Python 객체로 변환 | `tests/test_parser.py` (공유) | 완료 |
+| 4 | JSON 직렬화 (Python → JSON 문자열) | `tests/test_serializer.py` | 완료 |
+| 5 | 파일 입출력 (load / dump) | `tests/test_io.py` | 완료 |
+| 6 | 오류 처리 및 예외 정의 | `tests/test_errors.py` | 완료 |
+| 7 | 통합 테스트 | `tests/test_integration.py` | 완료 |
 
 > 각 Phase 구현 완료 시 해당 테스트 파일도 함께 작성·통과 후 커밋한다.
 

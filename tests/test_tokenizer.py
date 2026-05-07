@@ -1,5 +1,6 @@
 import unittest
 from jsonparser.tokenizer import tokenize, TokenType
+from jsonparser.exceptions import JSONDecodeError
 
 
 class TestStructuralTokens(unittest.TestCase):
@@ -160,27 +161,27 @@ class TestPosition(unittest.TestCase):
 class TestTokenizerErrors(unittest.TestCase):
 
     def test_unterminated_string(self):
-        with self.assertRaises(ValueError) as ctx:
+        with self.assertRaises(JSONDecodeError) as ctx:
             tokenize('"no end')
         self.assertIn('Unterminated', str(ctx.exception))
 
     def test_invalid_escape(self):
-        with self.assertRaises(ValueError) as ctx:
+        with self.assertRaises(JSONDecodeError) as ctx:
             tokenize('"\\q"')
         self.assertIn('escape', str(ctx.exception))
 
     def test_invalid_unicode_escape(self):
-        with self.assertRaises(ValueError) as ctx:
+        with self.assertRaises(JSONDecodeError) as ctx:
             tokenize('"\\uXXXX"')
         self.assertIn('uXXXX', str(ctx.exception))
 
     def test_unexpected_character(self):
-        with self.assertRaises(ValueError) as ctx:
+        with self.assertRaises(JSONDecodeError) as ctx:
             tokenize('@')
         self.assertIn('Unexpected character', str(ctx.exception))
 
     def test_invalid_literal(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(JSONDecodeError):
             tokenize('tru')
 
 

@@ -1,5 +1,6 @@
 import unittest
 from jsonparser.parser import parse_string
+from jsonparser.exceptions import JSONDecodeError
 
 
 class TestParserObject(unittest.TestCase):
@@ -89,31 +90,31 @@ class TestParserTypes(unittest.TestCase):
 class TestParserErrors(unittest.TestCase):
 
     def test_non_string_key(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(JSONDecodeError):
             parse_string('{1: "v"}')
 
     def test_missing_colon(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(JSONDecodeError):
             parse_string('{"k" "v"}')
 
     def test_trailing_comma_object(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(JSONDecodeError):
             parse_string('{"k": 1,}')
 
     def test_trailing_comma_array(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(JSONDecodeError):
             parse_string('[1,]')
 
     def test_missing_closing_brace(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(JSONDecodeError):
             parse_string('{"k": 1')
 
     def test_missing_closing_bracket(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(JSONDecodeError):
             parse_string('[1, 2')
 
     def test_extra_data(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(JSONDecodeError):
             parse_string('{} {}')
 
 
