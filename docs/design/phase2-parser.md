@@ -184,3 +184,4 @@ print(parse_string('"hi"')) # hi
 - [ ] Python 타입 변환 (bool, None 포함)
 - [ ] 중첩 구조 처리 (object 안 array, array 안 object 등)
 - [ ] 스모크 테스트 통과
+- [ ] `tests/test_parser.py` 작성 및 전체 통과
