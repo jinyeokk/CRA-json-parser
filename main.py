@@ -1,5 +1,8 @@
-from jsonparser.tokenizer import tokenize
+from jsonparser.parser import parse_string
 
-tokens = tokenize('{"key": [1, true, null]}')
-for t in tokens:
-    print(t)
+result = parse_string('{"name": "Alice", "scores": [10, 20.5], "active": true, "extra": null}')
+print(result)
+
+print(parse_string('[]'))
+print(parse_string('42'))
+print(parse_string('"hi"'))
