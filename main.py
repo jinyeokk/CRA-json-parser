@@ -1,15 +1,17 @@
 import jsonparser
+from jsonparser.exceptions import JSONDecodeError
 
-src = '{"name": "Alice", "scores": [10, 20], "active": true}'
-obj = jsonparser.loads(src)
-print(obj)
-print(jsonparser.dumps(obj))
+bad_inputs = [
+    ('{"key": @}',     "Unexpected character"),
+    ('{"key": "val}',  "Unterminated string"),
+    ('{1: "val"}',     "Object key must be a string"),
+    ('{"k": }',        "Unexpected token"),
+    ('{"k": 1} extra', "Extra data"),
+]
 
-with open("output.json", "w", encoding="utf-8") as f:
-    jsonparser.dump(obj, f, indent=2)
-
-with open("output.json", encoding="utf-8") as f:
-    loaded = jsonparser.load(f)
-
-assert loaded == obj
-print("파일 입출력 테스트 통과")
+for src, expected_msg in bad_inputs:
+    try:
+        jsonparser.loads(src)
+        print(f"FAIL: 오류가 발생해야 함 → {src!r}")
+    except JSONDecodeError as e:
+        print(f"OK  ({expected_msg}): {e}")

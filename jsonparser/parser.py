@@ -1,4 +1,5 @@
 from .tokenizer import tokenize, Token, TokenType
+from .exceptions import JSONDecodeError
 
 
 class Parser:
@@ -18,8 +19,9 @@ class Parser:
     def expect(self, token_type: TokenType) -> Token:
         token = self.peek()
         if token.type != token_type:
-            raise ValueError(
-                f"Expected {token_type.name}, got {token.type.name} at position {token.pos}"
+            raise JSONDecodeError(
+                f"Expected {token_type.name}, got {token.type.name}",
+                self.text, token.pos
             )
         return self.consume()
 
@@ -44,9 +46,11 @@ class Parser:
             self.consume()
             return None
         if token.type == TokenType.EOF:
-            raise ValueError(f"Unexpected end of input at position {token.pos}")
+            raise JSONDecodeError("Unexpected end of input", self.text, token.pos)
 
-        raise ValueError(f"Unexpected token {token.type.name} at position {token.pos}")
+        raise JSONDecodeError(
+            f"Unexpected token {token.type.name}", self.text, token.pos
+        )
 
     def parse_object(self) -> dict:
         self.expect(TokenType.LBRACE)
@@ -59,8 +63,9 @@ class Parser:
         while True:
             key_token = self.peek()
             if key_token.type != TokenType.STRING:
-                raise ValueError(
-                    f"Object key must be a string, got {key_token.type.name} at position {key_token.pos}"
+                raise JSONDecodeError(
+                    f"Object key must be a string, got {key_token.type.name}",
+                    self.text, key_token.pos
                 )
             key = self.consume().value
             self.expect(TokenType.COLON)
@@ -70,15 +75,15 @@ class Parser:
             if next_token.type == TokenType.COMMA:
                 self.consume()
                 if self.peek().type == TokenType.RBRACE:
-                    raise ValueError(
-                        f"Trailing comma in object at position {self.peek().pos}"
+                    raise JSONDecodeError(
+                        "Trailing comma in object", self.text, self.peek().pos
                     )
             elif next_token.type == TokenType.RBRACE:
                 self.consume()
                 return result
             else:
-                raise ValueError(
-                    f"Expected ',' or '}}' in object at position {next_token.pos}"
+                raise JSONDecodeError(
+                    "Expected ',' or '}' in object", self.text, next_token.pos
                 )
 
     def parse_array(self) -> list:
@@ -96,15 +101,15 @@ class Parser:
             if next_token.type == TokenType.COMMA:
                 self.consume()
                 if self.peek().type == TokenType.RBRACKET:
-                    raise ValueError(
-                        f"Trailing comma in array at position {self.peek().pos}"
+                    raise JSONDecodeError(
+                        "Trailing comma in array", self.text, self.peek().pos
                     )
             elif next_token.type == TokenType.RBRACKET:
                 self.consume()
                 return result
             else:
-                raise ValueError(
-                    f"Expected ',' or ']' in array at position {next_token.pos}"
+                raise JSONDecodeError(
+                    "Expected ',' or ']' in array", self.text, next_token.pos
                 )
 
 
@@ -114,7 +119,9 @@ def parse(tokens: list, text: str = '') -> object:
 
     remaining = parser.peek()
     if remaining.type != TokenType.EOF:
-        raise ValueError(f"Extra data after end of JSON at position {remaining.pos}")
+        raise JSONDecodeError(
+            "Extra data after end of JSON", text, remaining.pos
+        )
 
     return value
 

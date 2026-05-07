@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from .exceptions import JSONDecodeError
+
 
 class TokenType(Enum):
     LBRACE   = auto()
@@ -90,14 +92,14 @@ def tokenize(text: str) -> list:
             pos += 4
             continue
 
-        raise ValueError(f"Unexpected character: {ch!r} at position {pos}")
+        raise JSONDecodeError(f"Unexpected character: {ch!r}", text, pos)
 
     tokens.append(Token(TokenType.EOF, None, pos))
     return tokens
 
 
 def _scan_string(text: str, start: int) -> tuple:
-    pos = start + 1  # 여는 " 건너뜀
+    pos = start + 1
     length = len(text)
     chars = []
 
@@ -110,27 +112,27 @@ def _scan_string(text: str, start: int) -> tuple:
         if ch == '\\':
             pos += 1
             if pos >= length:
-                raise ValueError(f"Unterminated string starting at position {start}")
+                raise JSONDecodeError("Unterminated string starting at", text, start)
             esc = text[pos]
             if esc in _ESCAPES:
                 chars.append(_ESCAPES[esc])
             elif esc == 'u':
                 if pos + 4 >= length:
-                    raise ValueError(f"Invalid \\uXXXX escape at position {pos - 1}")
+                    raise JSONDecodeError("Invalid \\uXXXX escape", text, pos - 1)
                 hex_str = text[pos + 1:pos + 5]
                 if not all(c in '0123456789abcdefABCDEF' for c in hex_str):
-                    raise ValueError(f"Invalid \\uXXXX escape at position {pos - 1}")
+                    raise JSONDecodeError("Invalid \\uXXXX escape", text, pos - 1)
                 chars.append(chr(int(hex_str, 16)))
                 pos += 4
             else:
-                raise ValueError(f"Invalid escape sequence: \\{esc} at position {pos - 1}")
+                raise JSONDecodeError(f"Invalid escape sequence: \\{esc}", text, pos - 1)
             pos += 1
             continue
 
         chars.append(ch)
         pos += 1
 
-    raise ValueError(f"Unterminated string starting at position {start}")
+    raise JSONDecodeError("Unterminated string starting at", text, start)
 
 
 def _scan_number(text: str, start: int) -> tuple:
@@ -142,7 +144,7 @@ def _scan_number(text: str, start: int) -> tuple:
         pos += 1
 
     if pos >= length or not text[pos].isdigit():
-        raise ValueError(f"Invalid number literal at position {start}")
+        raise JSONDecodeError("Invalid number literal", text, start)
 
     if text[pos] == '0':
         pos += 1
@@ -154,7 +156,7 @@ def _scan_number(text: str, start: int) -> tuple:
         is_float = True
         pos += 1
         if pos >= length or not text[pos].isdigit():
-            raise ValueError(f"Invalid number literal at position {start}")
+            raise JSONDecodeError("Invalid number literal", text, start)
         while pos < length and text[pos].isdigit():
             pos += 1
 
@@ -164,7 +166,7 @@ def _scan_number(text: str, start: int) -> tuple:
         if pos < length and text[pos] in '+-':
             pos += 1
         if pos >= length or not text[pos].isdigit():
-            raise ValueError(f"Invalid number literal at position {start}")
+            raise JSONDecodeError("Invalid number literal", text, start)
         while pos < length and text[pos].isdigit():
             pos += 1
 
@@ -176,4 +178,4 @@ def _scan_number(text: str, start: int) -> tuple:
 def _expect_literal(text: str, pos: int, literal: str) -> None:
     end = pos + len(literal)
     if text[pos:end] != literal:
-        raise ValueError(f"Invalid literal: {text[pos:end]!r} at position {pos}")
+        raise JSONDecodeError(f"Invalid literal: {text[pos:end]!r}", text, pos)
