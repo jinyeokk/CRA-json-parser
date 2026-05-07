@@ -1,11 +1,15 @@
-from jsonparser.serializer import dumps
+import jsonparser
 
-obj = {
-    "name": "Alice",
-    "scores": [10, 20.5],
-    "active": True,
-    "extra": None,
-}
+src = '{"name": "Alice", "scores": [10, 20], "active": true}'
+obj = jsonparser.loads(src)
+print(obj)
+print(jsonparser.dumps(obj))
 
-print(dumps(obj))
-print(dumps(obj, indent=2))
+with open("output.json", "w", encoding="utf-8") as f:
+    jsonparser.dump(obj, f, indent=2)
+
+with open("output.json", encoding="utf-8") as f:
+    loaded = jsonparser.load(f)
+
+assert loaded == obj
+print("파일 입출력 테스트 통과")
