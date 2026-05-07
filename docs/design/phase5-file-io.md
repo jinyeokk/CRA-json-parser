@@ -128,3 +128,4 @@ print("파일 입출력 테스트 통과")
 - [ ] `jsonparser/__init__.py` 에서 4개 함수 공개 export
 - [ ] `loads` → `dumps` → `loads` 왕복 일치 확인
 - [ ] 실제 파일 쓰기 / 읽기 스모크 테스트 통과
+- [ ] `tests/test_io.py` 작성 및 전체 통과

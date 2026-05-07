@@ -167,3 +167,4 @@ Token(EOF,      None,  24)
 - [ ] `true` / `false` / `null` 처리
 - [ ] 공백 무시
 - [ ] 스모크 테스트 통과
+- [ ] `tests/test_tokenizer.py` 작성 및 전체 통과
