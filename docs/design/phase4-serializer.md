@@ -156,3 +156,4 @@ print(dumps(obj, indent=2))
 - [ ] 지원하지 않는 타입 `TypeError` 발생
 - [ ] `dict` 키가 `str`이 아닌 경우 `TypeError` 발생
 - [ ] 스모크 테스트 통과
+- [ ] `tests/test_serializer.py` 작성 및 전체 통과

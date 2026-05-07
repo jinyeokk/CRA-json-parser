@@ -142,3 +142,4 @@ for src, expected_msg in bad_inputs:
 - [ ] 오류 메시지에 line / column / char 위치 포함
 - [ ] `JSONDecodeError`가 `ValueError` 서브클래스임을 검증
 - [ ] 스모크 테스트 통과
+- [ ] `tests/test_errors.py` 작성 및 전체 통과

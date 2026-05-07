@@ -1,16 +1,17 @@
-# This is a sample Python script.
+import jsonparser
+from jsonparser.exceptions import JSONDecodeError
 
-# Press Ctrl+F5 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+bad_inputs = [
+    ('{"key": @}',     "Unexpected character"),
+    ('{"key": "val}',  "Unterminated string"),
+    ('{1: "val"}',     "Object key must be a string"),
+    ('{"k": }',        "Unexpected token"),
+    ('{"k": 1} extra', "Extra data"),
+]
 
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press F9 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+for src, expected_msg in bad_inputs:
+    try:
+        jsonparser.loads(src)
+        print(f"FAIL: 오류가 발생해야 함 → {src!r}")
+    except JSONDecodeError as e:
+        print(f"OK  ({expected_msg}): {e}")
